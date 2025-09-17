@@ -14,6 +14,10 @@ local beautiful = require("beautiful")
 local naughty = require("naughty")
 local menubar = require("menubar")
 local hotkeys_popup = require("awful.hotkeys_popup")
+-- Battery Widget
+local batteryarc_widget = require("batteryarc")
+-- Calendar Widget
+local calendar_widget = require("calendar")
 -- Enable hotkeys help widget for VIM and other apps
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
@@ -60,7 +64,7 @@ end
 beautiful.init("~/.config/awesome/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
-terminal = "kitty"
+terminal = "wezterm"
 editor = os.getenv("EDITOR") or "vscodium"
 
 editor_cmd = terminal .. " -e " .. editor
@@ -101,7 +105,22 @@ mykeyboardlayout = awful.widget.keyboardlayout()
 -- Create a textclock widget
 mytextclock = wibox.widget.textclock()
 
+local cw = calendar_widget({
+    theme = 'naughty',
+    placement = 'center',
+    start_sunday = true,
+    radius = 8,
+    auto_hide = true,
+    timeout = 1,
+-- with customized next/previous (see table above)
+    previous_month_button = 1,
+    next_month_button = 3,
+})
 
+mytextclock:connect_signal("button::press",
+    function(_, _, _, button)
+        if button == 1 then cw.toggle() end
+    end)
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
     awful.button({ }, 1, function(t) t:view_only() end),
@@ -154,6 +173,7 @@ mywibox:setup {
     },
     {   -- Right widgets
         layout = wibox.layout.fixed.horizontal,
+	batteryarc_widget(),
         mykeyboardlayout,
         wibox.widget.systray(),
     },
@@ -249,28 +269,19 @@ globalkeys = gears.table.join(
     awful.key({ modkey, }, "r", function() awful.util.spawn("rofi -show run") end,
         { description = "run prompt", group = "launcher" }),
 
-    awful.key({ modkey }, "x",
-        function ()
-            awful.prompt.run {
-                prompt       = "Run Lua code: ",
-                textbox      = awful.screen.focused().mypromptbox.widget,
-                exe_callback = awful.util.eval,
-                history_path = awful.util.get_cache_dir() .. "/history_eval"
-            }
-        end,
-        { description = "lua execute prompt", group = "awesome" }),
+    awful.key({ modkey }, "x", function () awful.util.spawn("rofi -show calc -modi calc -no-show-match -no-sort") end),
     -- Menubar
     awful.key({ modkey }, "p", function() menubar.show() end,
         { description = "show the menubar", group = "launcher" }),
 
     -- Lockscreen
-    awful.key({ modkey, }, "l", function () awful.util.spawn("betterlockscreen -l --display 1") end),
+    awful.key({ modkey, }, "b", function () awful.util.spawn("betterlockscreen -l --display 1") end),
 
     -- File Manager
     awful.key({ modkey, }, "e", function () awful.util.spawn("nemo") end),
 
     -- Printscreen
-    awful.key({ modkey, "Shift"}, "s", function () awful.util.spawn("flameshot gui") end)
+    awful.key({}, "Print", function () awful.util.spawn("flameshot gui") end)
 )
 
 clientkeys = gears.table.join(
@@ -478,8 +489,7 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 -- {{{ Auto Start
 
 awful.spawn.with_shell("picom")
-awful.spawn.with_shell("nitrogen --restore")
-awful.spawn.with_shell("unclutter -idle 1.5 &")
-awful.spawn.with_shell("fish")
+awful.spawn.once("unclutter -idle 1.5 &")
+awful.spawn.with_shell("feh --bg-fill ~/Wallpaper/bikejp.png")
 
 -- }}}
