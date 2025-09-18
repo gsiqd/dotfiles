@@ -21,10 +21,10 @@ theme.fg_urgent = "#141616"
 theme.fg_minimize = "#8E8E8E"
 
 theme.useless_gap = dpi(3)
-theme.border_width = dpi(0)
-theme.border_normal = "#FAFAFC"
-theme.border_focus = "#FAFAFC"
-theme.border_marked = "#00ff00"
+-- theme.border_width = dpi(0)
+-- theme.border_normal = "#FAFAFC"
+-- theme.border_focus = "#FAFAFC"
+-- theme.border_marked = "#00ff00"
 
 -- There are other variable sets
 -- overriding the default one when
@@ -44,7 +44,7 @@ theme.taglist_bg_focus = "#141616"
 theme.taglist_fg_focus = "#FAFAFC"
 
 theme.taglist_bg_empty = "#141616"
-theme.taglist_fg_empty = "#8E8E8E"
+theme.taglist_fg_empty = "#141616"
 
 theme.taglist_bg_occupied = "#141616"
 theme.taglist_fg_occupied = "#8E8E8E"
